@@ -1,93 +1,116 @@
-// 1. Seleccionamos los elementos
+// 1. Selección de elementos del DOM
+const titleInput = document.getElementById('titleInput');
 const noteInput = document.getElementById('noteInput');
 const addBtn = document.getElementById('addBtn');
 const notesContainer = document.getElementById('notesContainer');
-
-// 2. Cargar notas al iniciar la página
-document.addEventListener('DOMContentLoaded', () => {
-    const savedNotes = JSON.parse(localStorage.getItem('myNotes')) || [];
-    savedNotes.forEach(noteText => renderNote(noteText));
-});
-
-// 3. Función para renderizar (dibujar) una nota en el HTML
-function renderNote(noteObj) {
-    const noteCard = document.createElement('div');
-    noteCard.classList.add('note-card');
-    
-    // El objeto noteObj tendrá: { text: "hola", date: "22/03/2026 14:30" }
-    noteCard.innerHTML = `
-        <div>
-            <p>${noteObj.text}</p>
-            <small style="color: #888; font-size: 0.7rem;">${noteObj.date}</small>
-        </div>
-        <button class="delete-btn">Borrar</button>
-    `;
-
-    noteCard.querySelector('.delete-btn').addEventListener('click', () => {
-        noteCard.remove();
-        saveNotesToLocalStorage();
-    });
-
-    notesContainer.appendChild(noteCard);
-}
-
-// 4. Función para guardar TODAS las notas actuales en LocalStorage
-function saveNotesToLocalStorage() {
-    const notes = [];
-    document.querySelectorAll('.note-card').forEach(card => {
-        notes.push({
-            text: card.querySelector('p').innerText,
-            date: card.querySelector('small').innerText
-        });
-    });
-    localStorage.setItem('myNotes', JSON.stringify(notes));
-}
-
-// 5. Evento principal: Añadir nota
-addBtn.addEventListener('click', () => {
-    const text = noteInput.value.trim();
-    if (text === "") return;
-
-    const now = new Date();
-    const dateString = `${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-
-    const newNote = { text: text, date: dateString };
-    
-    renderNote(newNote);
-    saveNotesToLocalStorage();
-    noteInput.value = "";
-});
-
 const searchInput = document.getElementById('searchInput');
-
-searchInput.addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase();
-    const allNotes = document.querySelectorAll('.note-card');
-
-    allNotes.forEach(note => {
-        const text = note.querySelector('p').innerText.toLowerCase();
-        // Si el texto incluye lo que buscamos, se muestra, si no, se oculta
-        if (text.includes(query)) {
-            note.style.display = "flex";
-        } else {
-            note.style.display = "none";
-        }
-    });
-});
-
 const themeToggle = document.getElementById('themeToggle');
 
-themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+// 2. Cargar tareas al iniciar la página
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTasks = JSON.parse(localStorage.getItem('myTasks')) || [];
+    savedTasks.forEach(task => renderTask(task));
     
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    // Opcional: Cambiar solo el emoji si quieres
-    themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌑';
+    // Aplicar tema guardado
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
 });
 
-// Al cargar la página, aplicar el tema guardado
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+// 3. Función para dibujar la tarea en pantalla
+function renderTask(taskObj) {
+    const card = document.createElement('div');
+    card.classList.add('note-card');
+    
+    // Aplicar clase visual según el estado guardado
+    if (taskObj.status === 'done') card.classList.add('status-done');
+
+    card.innerHTML = `
+        <div style="flex-grow: 1;">
+            <h3 style="margin: 0 0 5px 0; font-size: 1.1rem;">${taskObj.title}</h3>
+            <p style="margin: 0;">${taskObj.text}</p>
+            <small style="display:block; margin-top:5px; opacity: 0.7;">${taskObj.date}</small>
+            
+            <div class="actions" style="margin-top: 10px; display: flex; gap: 5px;">
+                <button class="btn-status btn-done">Terminado</button>
+                <button class="btn-status btn-todo">Por hacer</button>
+                <button class="btn-status btn-delete" style="background-color: #dc3545; color: white;">Borrar</button>
+            </div>
+        </div>
+    `;
+
+    // Asignar eventos a los nuevos botones
+    // Botón Terminado
+    card.querySelector('.btn-done').onclick = () => {
+        card.classList.add('status-done');
+        saveTasks(); // Guardamos el cambio de estado
+    };
+
+    // Botón Por Hacer (Para revertir el tachado)
+    card.querySelector('.btn-todo').onclick = () => {
+        card.classList.remove('status-done');
+        saveTasks(); // Guardamos el cambio de estado
+    };
+
+    card.querySelector('.btn-delete').onclick = () => {
+        card.remove();
+        saveTasks();
+    };
+
+    notesContainer.appendChild(card);
+}
+
+// 4. Función para guardar en LocalStorage
+function saveTasks() {
+    const tasks = [];
+    document.querySelectorAll('.note-card').forEach(card => {
+        tasks.push({
+            title: card.querySelector('h3').innerText,
+            text: card.querySelector('p').innerText,
+            date: card.querySelector('small').innerText,
+            status: card.classList.contains('status-done') ? 'done' : 'todo'
+        });
+    });
+    localStorage.setItem('myTasks', JSON.stringify(tasks));
+}
+
+// 5. Evento para añadir nueva tarea
+addBtn.onclick = () => {
+    const title = titleInput.value.trim();
+    const text = noteInput.value.trim();
+    
+    if (!title || !text) {
+        alert("Por favor, llena el título y la descripción.");
+        return;
+    }
+
+    const now = new Date();
+    const dateStr = `${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+
+    const newTask = { title, text, date: dateStr, status: 'todo' };
+    renderTask(newTask);
+    saveTasks();
+    
+    // Limpiar campos
+    titleInput.value = "";
+    noteInput.value = "";
+};
+
+// 6. Lógica del Buscador
+searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    document.querySelectorAll('.note-card').forEach(card => {
+        const content = card.innerText.toLowerCase();
+        card.style.display = content.includes(query) ? "flex" : "none";
+    });
+});
+
+// 7. Lógica del Modo Oscuro
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+}
