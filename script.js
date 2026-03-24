@@ -128,3 +128,11 @@ function updateCounters() {
     document.getElementById('pendingCount').innerText = pending;
     document.getElementById('doneCount').innerText = done;
 }
+
+document.getElementById('clearDoneBtn').onclick = () => {
+    if(confirm("¿Seguro que quieres borrar todas las tareas terminadas?")) {
+        document.querySelectorAll('.note-card.status-done').forEach(card => card.remove());
+        saveTasks();
+        updateCounters();
+    }
+};
