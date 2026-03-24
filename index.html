@@ -9,11 +9,25 @@
     <div class="container">
         <button id="themeToggle">🌓</button>
         <h1>Mis Notas</h1>
-        <input type="text" id="searchInput" placeholder="Buscar notas..." style="width: 100%; margin-bottom: 1rem; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+        
+        <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Buscar notas..." style="width: 100%; margin-bottom: 1rem; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+        </div>
+        
         <input type="text" id="titleInput" placeholder="Título de la tarea..." style="width: 100%; margin-bottom: 0.5rem; padding: 10px; border-radius: 8px; border: 2px solid var(--input-border); background: var(--input-bg); color: var(--text-main);">
         <textarea id="noteInput" placeholder="Escribe algo interesante..."></textarea>
         <button id="addBtn">Guardar Nota</button>
         
+        <div class="stats-container">
+            <div class="stat-item">
+                <span id="pendingCount">0</span> Pendientes
+            </div>
+            <div class="stat-item">
+                <span id="doneCount">0</span> Terminadas
+            </div>
+        </div>
+
         <div id="notesContainer">
             </div>
     </div>

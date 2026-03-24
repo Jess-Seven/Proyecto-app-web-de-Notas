@@ -164,7 +164,34 @@ h1 { color: var(--text-main); }
 
 /* Espaciado individual para separarlos */
 #searchInput {
-    margin-bottom: 1rem;
+    padding-left: 45px !important; /* Dejamos espacio para la lupa a la izquierda */
+    border: 2px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-main);
+    height: 45px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Sombra muy sutil */
+    transition: all 0.3s ease;
+}
+#searchInput:focus {
+    border-color: var(--btn-primary);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    pointer-events: none; /* Para que al hacer clic en la lupa, se active el input */
+    opacity: 0.6;
 }
 
 textarea {
@@ -251,4 +278,25 @@ textarea {
 /* Efecto visual al presionar los botones */
 .btn-status:active {
     transform: scale(0.95);
+}
+
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 1.5rem 0;
+    padding: 10px;
+    background: var(--bg-body);
+    border-radius: 8px;
+}
+
+.stat-item {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.stat-item span {
+    color: var(--btn-primary);
+    font-size: 1.1rem;
+    margin-right: 5px;
 }

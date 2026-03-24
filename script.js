@@ -57,6 +57,7 @@ function renderTask(taskObj) {
     };
 
     notesContainer.appendChild(card);
+    updateCounters();
 }
 
 // 4. Función para guardar en LocalStorage
@@ -71,6 +72,7 @@ function saveTasks() {
         });
     });
     localStorage.setItem('myTasks', JSON.stringify(tasks));
+    updateCounters();
 }
 
 // 5. Evento para añadir nueva tarea
@@ -93,6 +95,7 @@ addBtn.onclick = () => {
     // Limpiar campos
     titleInput.value = "";
     noteInput.value = "";
+    updateCounters();
 };
 
 // 6. Lógica del Buscador
@@ -113,4 +116,15 @@ if (themeToggle) {
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
     });
+}
+
+function updateCounters() {
+    const allTasks = document.querySelectorAll('.note-card');
+    const doneTasks = document.querySelectorAll('.note-card.status-done');
+    
+    const pending = allTasks.length - doneTasks.length;
+    const done = doneTasks.length;
+
+    document.getElementById('pendingCount').innerText = pending;
+    document.getElementById('doneCount').innerText = done;
 }
